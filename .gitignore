@@ -1,0 +1,12 @@
+__pycache__/
+.venv/
+.venvai/
+.vscode/
+/media/
+*.ipynb
+!model.ipynb
+*.model
+*buildinfo
+*.tar
+TODO
+.env

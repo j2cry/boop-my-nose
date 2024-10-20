@@ -1,0 +1,23 @@
+services:
+  boopmynose:
+    image: boopmynose
+    container_name: boop
+    environment:
+      BOOPMYNOSE_CORS: "*"
+      BOOPMYNOSE_IMAGE_FOLDER: /var/boopmynose
+      BOOPMYNOSE_THRESHOLD: 0.5
+    volumes:
+      - /var/datasets/afhq/cat:/var/boopmynose
+    networks:
+      - traefik
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.boopmynose.entrypoints=web,websecure
+      - traefik.http.routers.boopmynose.rule=Host(`fragarie.dev`)
+      - traefik.http.routers.boopmynose.service=boopmynose
+      - traefik.http.services.boopmynose.loadbalancer.server.port=5252
+      - traefik.http.services.boopmynose.loadbalancer.server.url=http://boop
+
+networks:
+  traefik:
+    external: true
