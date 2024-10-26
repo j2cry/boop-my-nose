@@ -111,6 +111,7 @@ function App() {
     // request on page open
     if (!loadRef.current) {
         loadRef.current = true
+        showInfo()
         socket.emit("new-image", receiveNewImage)
     }
     // render component
