@@ -1,4 +1,5 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { useCookies } from "react-cookie";
 import io from "socket.io-client";
 import Splash, { SplashType } from "../Splash/Splash";
 import {
@@ -28,10 +29,11 @@ const socket = io(import.meta.env.MODE === "development" ? ":5252" : "")
 
 
 function App() {
+    const [cookies, setCookie] = useCookies(["score", "visited"])
     const [splash, setSplash] = useState<React.ReactNode>(<></>)
     const [image64, setImage64] = useState<ImageData>({id: "", data: ""})
     const [imageScale, setImageScale] = useState<ImageScale>({x: 1, y: 1})
-    const [score, setScore] = useState(0)
+    const [score, setScore] = useState<number>(0)
     const loadRef = useRef(false)
 
     // receive new image
@@ -111,9 +113,19 @@ function App() {
     // request on page open
     if (!loadRef.current) {
         loadRef.current = true
-        showInfo()
+        // on first visit
+        if (!cookies.visited) {
+            setCookie("visited", true, {sameSite: true})
+            showInfo()
+        }
         socket.emit("new-image", receiveNewImage)
+        if (cookies.score)
+            setScore(cookies.score)
     }
+    // on score changed
+    useEffect(() => {
+        setCookie("score", score, {sameSite: true})
+    }, [score])
     // render component
     return (
         <>
